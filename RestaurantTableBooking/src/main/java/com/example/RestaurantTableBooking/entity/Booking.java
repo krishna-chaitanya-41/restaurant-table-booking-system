@@ -46,7 +46,7 @@ public class Booking {
     private Integer numberOfGuests;
 
     @Column(name="table_status")
-    private String status="PENDING";
+    private Status status=Status.PENDING;
 
     @ManyToOne
     @JoinColumn(name="restaurantTable_id")

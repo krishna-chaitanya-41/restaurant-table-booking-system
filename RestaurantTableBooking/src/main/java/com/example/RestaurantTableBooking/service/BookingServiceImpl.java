@@ -43,7 +43,7 @@ public class BookingServiceImpl implements BookingService{
             booking.setBookingDate(dto.getBookingDate());
             booking.setBookingDuration(dto.getBookingDuration());
             booking.setBookingTime(dto.getBookingTime());
-            booking.setStatus("BOOKED");
+            booking.setStatus(Status.BOOKED);
             booking.setRestaurant(restaurant);
             booking.setRestaurantTable(restaurantTable);
             booking.setNumberOfGuests(dto.getNumberOfGuests());
@@ -56,7 +56,11 @@ public class BookingServiceImpl implements BookingService{
         Booking booking=bookingRepository.findById(id).orElseThrow(()->new BookingNotFoundException("Booking not found with given id"));
         RestaurantTable restaurantTable=restaurantTableRepository.findById(dto.getRestaurantTableId()).orElseThrow(()->new TableNotFoundException("Table not found to book"));
         Restaurant restaurant=restaurantRepository.findById(dto.getRestaurantId()).orElseThrow(()->new RestaurantNotFoundException("Restaurant Not found to book table"));
-
+        RestaurantTable oldTable = booking.getRestaurantTable();
+        if (oldTable != null && oldTable.getId() != restaurantTable.getId()) {
+            oldTable.setAvailable(true);
+            restaurantTableRepository.save(oldTable);
+        }
         if(!restaurantTable.isAvailable()){
             throw new TableNotAvailableException("Table is already Booked");
         }
@@ -65,7 +69,7 @@ public class BookingServiceImpl implements BookingService{
         booking.setBookingDate(dto.getBookingDate());
         booking.setBookingDuration(dto.getBookingDuration());
         booking.setBookingTime(dto.getBookingTime());
-        booking.setStatus("BOOKED");
+        booking.setStatus(Status.BOOKED);
         booking.setRestaurant(restaurant);
         booking.setRestaurantTable(restaurantTable);
         booking.setNumberOfGuests(dto.getNumberOfGuests());
@@ -75,7 +79,7 @@ public class BookingServiceImpl implements BookingService{
     }
     public void deleteBooking(Long id){
         Booking booking=bookingRepository.findById(id).orElseThrow(()-> new BookingNotFoundException("booking not found with provided id to delete"));
-        booking.setStatus("CANCELLED");
+        booking.setStatus(Status.CANCELLED);
         booking.getRestaurantTable().setAvailable(true);
         restaurantTableRepository.save(booking.getRestaurantTable());
         bookingRepository.save(booking);

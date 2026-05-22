@@ -12,7 +12,8 @@ import java.util.Date;
 
 @Component
 public class JwtUtil{
-    private String secretKey = "mnbvcxzlkjhgfdsapoiuytrewq0987654321";
+    @Value("${jwt.secret}")
+    private String secretKey;
     public String generateToken(String email){
         return Jwts.builder().setSubject(email).
                 setIssuedAt(new Date()).
