@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> hanldeInvalidArguments(MethodArgumentNotValidException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
 
     @ExceptionHandler(RestaurantNotFoundException.class)
     public ResponseEntity<String> handleRestaurantNotFound(RestaurantNotFoundException e){
